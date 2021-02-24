@@ -34,6 +34,8 @@ class MainActivity : AppCompatActivity(),
                 println("Transformed 1")
                 println(test)
             }
+
+            
              if (i==1)
             {
                 val test = num3 * num
