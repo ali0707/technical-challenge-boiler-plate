@@ -1,5 +1,6 @@
 package io.medlink.technicalchallengeboilerplate.api
 
+import android.widget.Toast
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -11,41 +12,40 @@ interface NumbersDataSource {
 
 class NumbersProvider
 constructor(
-    val numbersDataSource: NumbersDataSource
-) {
+    val numbersDataSource: NumbersDataSource)
+{
     init {
+
         provideNumbers()
     }
 
     private fun provideNumbers() {
-        val service =
-            ServiceBuilder.buildService(
-                NumbersService::class.java
+        val service = ServiceBuilder.getServiceClass( NumbersService::class.java
             )
-
-        val call = service.generateRandomNumbers()
-
-        call.enqueue(object : Callback<String> {
+        val call = service!!.generateRandomNumbers()
+        call.enqueue( object : Callback<RandomNumbers> {
             override fun onResponse(
-                call: Call<String>,
-                response: Response<String>
+                call: Call<RandomNumbers>,
+                response: Response<RandomNumbers>
             ) {
                 if (response.isSuccessful) {
                     response.body()?.let {
-                        numbersDataSource.onSuccess(
-                            // TODO: Remove empty list and add the proper response from the api
-                            emptyList()
-                        )
+                        numbersDataSource.onSuccess(it.randomInput)
                     }
+
                 } else {
                     numbersDataSource.onFailure("Failed to get random input")
                 }
 
             }
 
-            override fun onFailure(call: Call<String>, t: Throwable) {
-                numbersDataSource.onFailure("Failed to get random input")
+
+            override fun onFailure(call: Call<RandomNumbers>, t: Throwable) {
             }
         })
     }
+}
+
+private fun <T> Call<T>.enqueue(callback: Callback<NumbersService>) {
+
 }
